@@ -13,6 +13,9 @@
 		2B497A4E235D694F0015BA47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B497A4D235D694F0015BA47 /* Assets.xcassets */; };
 		2B497A51235D694F0015BA47 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B497A4F235D694F0015BA47 /* LaunchScreen.storyboard */; };
 		2B497A5C235D694F0015BA47 /* kbManagerDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B497A5B235D694F0015BA47 /* kbManagerDemoTests.swift */; };
+		2B497A69235D695F0015BA47 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B497A67235D695F0015BA47 /* UIView+Extension.swift */; };
+		2B497A6A235D695F0015BA47 /* FCBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B497A68235D695F0015BA47 /* FCBaseViewController.swift */; };
+		2B843A16235DAD6A00C657AB /* KeyboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B843A15235DAD6A00C657AB /* KeyboardManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +39,9 @@
 		2B497A57235D694F0015BA47 /* kbManagerDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = kbManagerDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B497A5B235D694F0015BA47 /* kbManagerDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = kbManagerDemoTests.swift; sourceTree = "<group>"; };
 		2B497A5D235D694F0015BA47 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2B497A67235D695F0015BA47 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		2B497A68235D695F0015BA47 /* FCBaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FCBaseViewController.swift; sourceTree = "<group>"; };
+		2B843A15235DAD6A00C657AB /* KeyboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +83,7 @@
 		2B497A45235D694E0015BA47 /* kbManagerDemo */ = {
 			isa = PBXGroup;
 			children = (
+				2B497A66235D695F0015BA47 /* Framework */,
 				2B497A46235D694E0015BA47 /* AppDelegate.swift */,
 				2B497A48235D694E0015BA47 /* ViewController.swift */,
 				2B497A4A235D694E0015BA47 /* Main.storyboard */,
@@ -94,6 +101,16 @@
 				2B497A5D235D694F0015BA47 /* Info.plist */,
 			);
 			path = kbManagerDemoTests;
+			sourceTree = "<group>";
+		};
+		2B497A66235D695F0015BA47 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				2B497A67235D695F0015BA47 /* UIView+Extension.swift */,
+				2B497A68235D695F0015BA47 /* FCBaseViewController.swift */,
+				2B843A15235DAD6A00C657AB /* KeyboardManager.swift */,
+			);
+			path = Framework;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,6 +214,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B497A6A235D695F0015BA47 /* FCBaseViewController.swift in Sources */,
+				2B497A69235D695F0015BA47 /* UIView+Extension.swift in Sources */,
+				2B843A16235DAD6A00C657AB /* KeyboardManager.swift in Sources */,
 				2B497A49235D694E0015BA47 /* ViewController.swift in Sources */,
 				2B497A47235D694E0015BA47 /* AppDelegate.swift in Sources */,
 			);
@@ -367,7 +387,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rk.kbManagerDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rk.kbManagerDem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -385,7 +405,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rk.kbManagerDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rk.kbManagerDem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
