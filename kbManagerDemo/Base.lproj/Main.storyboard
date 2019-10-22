@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="b7S-1T-Q8y">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="b7S-1T-Q8y">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -45,6 +45,12 @@
                                                     <segue destination="OKR-nZ-S1y" kind="push" id="NrZ-vM-a5e"/>
                                                 </connections>
                                             </button>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xG8-3B-eYY">
+                                                <rect key="frame" x="183" y="35" width="49" height="31"/>
+                                                <connections>
+                                                    <action selector="switchValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2gY-7d-5sM"/>
+                                                </connections>
+                                            </switch>
                                         </subviews>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -55,15 +61,19 @@
                                             <constraint firstAttribute="trailing" secondItem="Moa-St-YTW" secondAttribute="trailing" constant="60" id="8pF-mF-XAG"/>
                                             <constraint firstItem="3qb-cW-IDp" firstAttribute="centerY" secondItem="gSh-L0-3f2" secondAttribute="centerY" multiplier="0.5" id="BHP-at-Xuu"/>
                                             <constraint firstAttribute="trailing" secondItem="xme-rD-gVR" secondAttribute="trailing" constant="100" id="DVj-lV-8lB"/>
+                                            <constraint firstItem="xG8-3B-eYY" firstAttribute="leading" secondItem="gSh-L0-3f2" secondAttribute="leading" constant="183" id="F06-AC-9Ii"/>
                                             <constraint firstItem="3qb-cW-IDp" firstAttribute="leading" secondItem="gSh-L0-3f2" secondAttribute="leading" constant="60" id="JJ6-e6-4ns"/>
+                                            <constraint firstItem="xme-rD-gVR" firstAttribute="top" secondItem="xG8-3B-eYY" secondAttribute="bottom" constant="29" id="Jrj-GT-BT1"/>
                                             <constraint firstItem="xme-rD-gVR" firstAttribute="top" secondItem="gSh-L0-3f2" secondAttribute="top" constant="95" id="O6m-jT-Bsg"/>
                                             <constraint firstItem="Moa-St-YTW" firstAttribute="centerY" secondItem="gSh-L0-3f2" secondAttribute="centerY" id="OkP-3v-sDj"/>
                                             <constraint firstItem="Moa-St-YTW" firstAttribute="centerX" secondItem="gSh-L0-3f2" secondAttribute="centerX" id="PK5-Hl-9ei"/>
                                             <constraint firstItem="xme-rD-gVR" firstAttribute="leading" secondItem="gSh-L0-3f2" secondAttribute="leading" constant="100" id="Xjr-bu-iGI"/>
                                             <constraint firstItem="3qb-cW-IDp" firstAttribute="top" secondItem="xme-rD-gVR" secondAttribute="bottom" constant="35.5" id="bfN-O1-T4U"/>
                                             <constraint firstItem="Aez-h0-rjl" firstAttribute="leading" secondItem="gSh-L0-3f2" secondAttribute="leading" constant="60" id="iJe-aa-Cb2"/>
+                                            <constraint firstAttribute="trailing" secondItem="xG8-3B-eYY" secondAttribute="trailing" constant="184" id="sUl-xd-JF0"/>
                                             <constraint firstAttribute="trailing" secondItem="3qb-cW-IDp" secondAttribute="trailing" constant="60" id="syq-qV-4M1"/>
                                             <constraint firstAttribute="trailing" secondItem="Aez-h0-rjl" secondAttribute="trailing" constant="60" id="w2p-JE-zMN"/>
+                                            <constraint firstItem="xG8-3B-eYY" firstAttribute="top" secondItem="gSh-L0-3f2" secondAttribute="top" constant="35" id="w78-vc-AJP"/>
                                         </constraints>
                                     </view>
                                 </subviews>

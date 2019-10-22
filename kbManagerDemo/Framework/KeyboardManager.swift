@@ -15,11 +15,9 @@ class KeyboardManager: NSObject {
     private var selectedTextField: UITextField? {
         didSet {
             if let textField = self.selectedTextField {
-                print("selectedTextField init")
                 self.textFieldSelected(textField)
             }
             else {
-                print("selectedTextField deinit")
                 self.textFieldDeselected(oldValue)
             }
             
@@ -47,21 +45,31 @@ class KeyboardManager: NSObject {
     var keyboardDidShowScrollYDistance: CGFloat = 0
 //    var kbClickGoClosure: ((_ textField: UITextField) -> ())?
     
+    var isEnable: Bool = false {
+        didSet {
+            if self.isEnable {
+                self.initNotifications()
+            }
+            else {
+                self.deinitNotifications()
+            }
+        }
+    }
+    
     //for the bottom constraint of the first subview in scroll view if it's exist
     //to enable the scrolling of scroll view after keyboard raised
     private weak var _retainedScrollView: UIScrollView?
     private weak var _retainedScrollViewBottomConstraint: NSLayoutConstraint?
     private var _retainedTapGestureRecognizer: UIGestureRecognizer?
     
-    
-    override init() {
-        super.init()
-        self.initNotifications()
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
+//    override init() {
+//        super.init()
+//        self.initNotifications()
+//    }
+//
+//    deinit {
+//        NotificationCenter.default.removeObserver(self)
+//    }
 }
 
 extension KeyboardManager {
@@ -75,6 +83,10 @@ extension KeyboardManager {
         NotificationCenter.default.addObserver(self, selector: #selector(self.textDidChangeNotification(_:)), name: UITextField.textDidChangeNotification, object: nil)
     }
     
+    private func deinitNotifications() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     private func textFieldDeselected(_ textField: UITextField?) {
         self.removeTappedAround(textField)
         self._retainedScrollView = nil
@@ -82,7 +94,7 @@ extension KeyboardManager {
     }
         
     private func textFieldSelected(_ textField: UITextField) {
-        textField.delegate = self
+//        textField.delegate = self
         self.hideKeyboardWhenTappedAround()
         self.getScrollView()
     }
@@ -188,14 +200,14 @@ extension KeyboardManager {
         }
     }
     
-    func hideKeyboardWhenTappedAround() {
+    private func hideKeyboardWhenTappedAround() {
         guard let view = self.view else {return}
         _retainedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.closeKeyboard))
         _retainedTapGestureRecognizer!.cancelsTouchesInView = false
         view.addGestureRecognizer(_retainedTapGestureRecognizer!)
     }
     
-    func removeTappedAround(_ textField: UITextField?) {
+    private func removeTappedAround(_ textField: UITextField?) {
         guard let tf = textField,
             let vc = tf.viewContainingController(),
             let view = vc.view,
@@ -212,7 +224,7 @@ extension KeyboardManager {
 //MARK: - Notification callback
 extension KeyboardManager {
     // keyboard
-    @objc func keyboardWillShow(notification: NSNotification) {
+    @objc internal func keyboardWillShow(notification: NSNotification) {
         print(#function)
         self.isKeyboardDidShow = true
         let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
@@ -232,7 +244,7 @@ extension KeyboardManager {
         }
     }
     
-    @objc func keyboardWillHide(notification: NSNotification){
+    @objc internal func keyboardWillHide(notification: NSNotification){
         if let containerViewBottomConstraint = self._retainedScrollViewBottomConstraint {
              let window = UIApplication.shared.keyWindow
             if #available(iOS 11.0, *) {
@@ -267,21 +279,21 @@ extension KeyboardManager {
 }
 
 //MARK: - UITextFieldDelegate
-extension KeyboardManager: UITextFieldDelegate {
-
-    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        switch textField.returnKeyType {
-        case .go:
-            textField.resignFirstResponder()
-//            self.kbClickGoClosure?(textField)
-        case .next:
-            self.goNextTextField()
-        default:
-            textField.resignFirstResponder()
-        }
-        return true
-    }
-}
+//extension KeyboardManager: UITextFieldDelegate {
+//
+//    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//        switch textField.returnKeyType {
+//        case .go:
+//            textField.resignFirstResponder()
+////            self.kbClickGoClosure?(textField)
+//        case .next:
+//            self.goNextTextField()
+//        default:
+//            textField.resignFirstResponder()
+//        }
+//        return true
+//    }
+//}
 
 fileprivate extension UIView {
     func getAllConstraints() -> [NSLayoutConstraint] {

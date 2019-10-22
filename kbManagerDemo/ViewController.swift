@@ -16,5 +16,9 @@ class ViewController: FCBaseViewController {
     }
 
 
+    @IBAction func switchValueChanged(_ sender: UISwitch) {
+        KeyboardManager.shared.isEnable = sender.isOn
+        print("KeyboardManager KeyboardManager \(sender.isOn)")
+    }
 }
 
