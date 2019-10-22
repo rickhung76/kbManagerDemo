@@ -100,10 +100,6 @@ extension KeyboardManager {
     }
 
     private func getScrollView() {
-        defer {
-            self.scoll2TextField()
-        }
-        
         guard let view = self.view,
             let scrollView = view.allSubviews.filter({$0 is UIScrollView}).first(where: {$0.superview == self.view}) as? UIScrollView else {return}
         self._retainedScrollView = scrollView
@@ -132,7 +128,9 @@ extension KeyboardManager {
             guard let textField = self.selectedTextField,
                 let scrollView = self._retainedScrollView,
                 self._retainedScrollViewBottomConstraint != nil else {return}
-            let point = self.getScrollOffset(with: textField, in: scrollView, self.keyboardDidShowScrollYDistance)
+            let point = self.getScrollOffset(with: textField,
+                                             in: scrollView,
+                                             shift: self.keyboardDidShowScrollYDistance)
             scrollView.setContentOffset(point, animated: true)
         }
     }
@@ -163,14 +161,14 @@ extension KeyboardManager {
         }
     }
     
-    private func getScrollOffset(with textField: UIView, in scrollView: UIScrollView, _ shift: CGFloat) -> CGPoint {
+    private func getScrollOffset(with textField: UIView, in scrollView: UIScrollView, shift: CGFloat) -> CGPoint {
         let textFieldFrame = scrollView.convert(textField.frame, from: textField.superview)
         let yOffset = textFieldFrame.origin.y - scrollView.bounds.height/2 + shift
         var y: CGFloat = 0.0
         if yOffset > 0 && yOffset < scrollView.bounds.height/2  {
             y = yOffset
         }
-        else if yOffset > scrollView.center.y {
+        else if yOffset >= scrollView.bounds.height/2 {
             y = scrollView.contentSize.height - scrollView.bounds.height
         }
         return CGPoint(x: 0, y: y)
@@ -226,6 +224,7 @@ extension KeyboardManager {
     // keyboard
     @objc internal func keyboardWillShow(notification: NSNotification) {
         print(#function)
+        guard let vc = self.viewController else {return}
         self.isKeyboardDidShow = true
         let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let keyboardSize:CGSize = keyboardFrame.size
@@ -233,24 +232,29 @@ extension KeyboardManager {
         
         if let containerViewBottomConstraint = self._retainedScrollViewBottomConstraint {
             if #available(iOS 11.0, *) {
-                let window = UIApplication.shared.keyWindow
-                containerViewBottomConstraint.constant = self.keyboardHeight - window!.safeAreaInsets.bottom
+                let safeAreaInsetsBottom: CGFloat = vc.view.safeAreaInsets.bottom
+                containerViewBottomConstraint.constant = self.keyboardHeight - safeAreaInsetsBottom
             } else {
-                containerViewBottomConstraint.constant = self.keyboardHeight
+                let tabBarHeight: CGFloat = vc.tabBarController?.tabBar.frame.height ?? 0.0
+                containerViewBottomConstraint.constant = self.keyboardHeight - tabBarHeight
             }
-            self.view?.layoutIfNeeded()
+            vc.view.layoutIfNeeded()
+            self.scoll2TextField()
         } else {
             self.raiseScreen()
         }
     }
     
     @objc internal func keyboardWillHide(notification: NSNotification){
+        print(#function)
+        guard let vc = self.viewController else {return}
         if let containerViewBottomConstraint = self._retainedScrollViewBottomConstraint {
-             let window = UIApplication.shared.keyWindow
             if #available(iOS 11.0, *) {
-                containerViewBottomConstraint.constant = -window!.safeAreaInsets.bottom
+                let safeAreaInsetsBottom: CGFloat = vc.view.safeAreaInsets.bottom
+                containerViewBottomConstraint.constant = -safeAreaInsetsBottom
             } else {
-                containerViewBottomConstraint.constant = 0
+                let tabBarHeight: CGFloat = vc.tabBarController?.tabBar.frame.height ?? 0.0
+                containerViewBottomConstraint.constant = -tabBarHeight
             }
             
             UIView.animate(withDuration: 0.3) {
