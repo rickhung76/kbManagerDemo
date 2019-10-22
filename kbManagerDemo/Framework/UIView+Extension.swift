@@ -10,7 +10,9 @@ import Foundation
 import UIKit
 
 extension UIView {
-    
+    var allSubviews: [UIView] {
+        return self.subviews.reduce([UIView]()) { $0 + [$1] + $1.allSubviews }
+    }
     
     /**
     Returns the topMost UIViewController object in hierarchy.

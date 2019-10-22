@@ -20,7 +20,6 @@ class KeyboardManager: NSObject {
             else {
                 self.textFieldDeselected(oldValue)
             }
-            
         }
     }
     
@@ -33,9 +32,9 @@ class KeyboardManager: NSObject {
         return self.viewController?.view
     }
     
-    private lazy var textFields: [UITextField] = {
-        return self.view?.allSubviews.filter{$0 is UITextField} as! [UITextField]
-    }()
+    private var textFields: [UITextField] {
+        return self.view?.allSubviews(is: UITextField.self) ?? []
+    }
     
     private var isScreenRaised = false
     private var oriFrameOriginY: CGFloat = 0
@@ -43,7 +42,6 @@ class KeyboardManager: NSObject {
     
     var isKeyboardDidShow = false
     var keyboardDidShowScrollYDistance: CGFloat = 0
-//    var kbClickGoClosure: ((_ textField: UITextField) -> ())?
     
     var isEnable: Bool = false {
         didSet {
@@ -101,7 +99,7 @@ extension KeyboardManager {
 
     private func getScrollView() {
         guard let view = self.view,
-            let scrollView = view.allSubviews.filter({$0 is UIScrollView}).first(where: {$0.superview == self.view}) as? UIScrollView else {return}
+            let scrollView = view.allSubviews(is: UIScrollView.self).first(where: {$0.superview == self.view}) else {return}
         self._retainedScrollView = scrollView
         self._retainedScrollViewBottomConstraint = scrollView.getBottomConstraints().filter({ (contraint) -> Bool in
             if #available(iOS 11.0, *) {
@@ -282,22 +280,6 @@ extension KeyboardManager {
     }
 }
 
-//MARK: - UITextFieldDelegate
-//extension KeyboardManager: UITextFieldDelegate {
-//
-//    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        switch textField.returnKeyType {
-//        case .go:
-//            textField.resignFirstResponder()
-////            self.kbClickGoClosure?(textField)
-//        case .next:
-//            self.goNextTextField()
-//        default:
-//            textField.resignFirstResponder()
-//        }
-//        return true
-//    }
-//}
 
 fileprivate extension UIView {
     func getAllConstraints() -> [NSLayoutConstraint] {
@@ -320,9 +302,10 @@ fileprivate extension UIView {
             ($0.secondAttribute == .bottom && $0.secondItem as? UIView == self)
         } )
     }
-    
-    var allSubviews: [UIView] {
-        return self.subviews.reduce([UIView]()) { $0 + [$1] + $1.allSubviews }
+
+    func allSubviews<T>(is type: T.Type) -> [T] {
+        let views = self.subviews.reduce([UIView]()) { $0 + [$1] + $1.allSubviews(is: T.self) }
+        return views.filter({$0 is T}) as! [T]
     }
         
     /**

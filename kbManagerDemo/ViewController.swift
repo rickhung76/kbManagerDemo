@@ -9,10 +9,17 @@
 import UIKit
 
 class ViewController: FCBaseViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        kbClickGoClosure = { (_) in
+            print(#file, #function)
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 
 

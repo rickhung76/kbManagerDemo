@@ -10,6 +10,12 @@ import UIKit
 
 public class FCBaseViewController: UIViewController {
     
+    var kbClickGoClosure: ((_ textField: UITextField) -> ())?
+    
+    private lazy var textFields: [UITextField] = {
+        return view.allSubviews.filter{$0 is UITextField} as! [UITextField]
+    }()
+
     //MARK: - Life Cycle
     public init() {
         let className = NSStringFromClass(type(of: self))
@@ -33,22 +39,15 @@ public class FCBaseViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        print(#function)
+        initTextFields()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print(#function)
     }
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        //TODO: 1
-//        if #available(iOS 11.0, *) {
-//            let window = UIApplication.shared.keyWindow
-//            self.scrollContainerViewBottomConstraint?.constant = -window!.safeAreaInsets.bottom
-//        }
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -141,9 +140,39 @@ extension FCBaseViewController {
     }
 }
 
+//MARK: - UITextField
+extension FCBaseViewController {
+    private func initTextFields() {
+        guard textFields.count > 0 else {return}
+        for textField in textFields {
+            textField.delegate = self
+            let isLast = textFields.last! == textField
+            textField.returnKeyType = isLast ? .go : .next
+        }
+    }
+}
+
+//MARK: - UITextFieldDelegate
+extension FCBaseViewController: UITextFieldDelegate {
+
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField.returnKeyType {
+        case .go:
+            textField.resignFirstResponder()
+            self.kbClickGoClosure?(textField)
+        case .next:
+            KeyboardManager.shared.goNextTextField()
+        default:
+            textField.resignFirstResponder()
+        }
+        return true
+    }
+}
+
  
 extension UINavigationController {
     override open var preferredStatusBarStyle: UIStatusBarStyle {
         return topViewController?.preferredStatusBarStyle ?? .lightContent
     }
 }
+
