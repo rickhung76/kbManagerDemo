@@ -57,7 +57,6 @@ class KeyboardManager: NSObject {
     //for the bottom constraint of the first subview in scroll view if it's exist
     //to enable the scrolling of scroll view after keyboard raised
     private weak var _retainedScrollView: UIScrollView?
-    private weak var _retainedScrollViewBottomConstraint: NSLayoutConstraint?
     private var _retainedTapGestureRecognizer: UIGestureRecognizer?
     
 //    override init() {
@@ -88,7 +87,6 @@ extension KeyboardManager {
     private func textFieldDeselected(_ textField: UITextField?) {
         self.removeTappedAround(textField)
         self._retainedScrollView = nil
-        self._retainedScrollViewBottomConstraint = nil
     }
         
     private func textFieldSelected(_ textField: UITextField) {
@@ -101,31 +99,12 @@ extension KeyboardManager {
         guard let view = self.view,
             let scrollView = view.allSubviews(is: UIScrollView.self).first(where: {$0.superview == self.view}) else {return}
         self._retainedScrollView = scrollView
-        self._retainedScrollViewBottomConstraint = scrollView.getBottomConstraints().filter({ (contraint) -> Bool in
-            if #available(iOS 11.0, *) {
-                let isAnchored2SafeArea = (contraint.firstItem as? UILayoutGuide == view.safeAreaLayoutGuide)
-                    || (contraint.secondItem as? UILayoutGuide == view.safeAreaLayoutGuide)
-                
-                let isAnchored2SuperView = (contraint.firstItem as? UIView == view)
-                    || (contraint.secondItem as? UIView == view)
-                
-                return isAnchored2SafeArea || isAnchored2SuperView
-                    
-            } else {
-                let isAnchored2SuperView = (contraint.firstItem as? UIView == self.view)
-                    || (contraint.secondItem as? UIView == self.view)
-                
-                return isAnchored2SuperView
-            }
-        }).first
-
     }
     
     private func scoll2TextField() {
         DispatchQueue.main.async {
             guard let textField = self.selectedTextField,
-                let scrollView = self._retainedScrollView,
-                self._retainedScrollViewBottomConstraint != nil else {return}
+                let scrollView = self._retainedScrollView else {return}
             let point = self.getScrollOffset(with: textField,
                                              in: scrollView,
                                              shift: self.keyboardDidShowScrollYDistance)
@@ -227,18 +206,20 @@ extension KeyboardManager {
         let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let keyboardSize:CGSize = keyboardFrame.size
         self.keyboardHeight = keyboardSize.height
-        
-        if let containerViewBottomConstraint = self._retainedScrollViewBottomConstraint {
+
+        if let scrollView = self._retainedScrollView {
+            var height: CGFloat = 0
             if #available(iOS 11.0, *) {
                 let safeAreaInsetsBottom: CGFloat = vc.view.safeAreaInsets.bottom
-                containerViewBottomConstraint.constant = self.keyboardHeight - safeAreaInsetsBottom
+                height = self.keyboardHeight - safeAreaInsetsBottom
             } else {
                 let tabBarHeight: CGFloat = vc.tabBarController?.tabBar.frame.height ?? 0.0
-                containerViewBottomConstraint.constant = self.keyboardHeight - tabBarHeight
+                height = self.keyboardHeight - tabBarHeight
             }
-            vc.view.layoutIfNeeded()
+            scrollView.contentInset.bottom = height
             self.scoll2TextField()
-        } else {
+        }
+        else {
             self.raiseScreen()
         }
     }
@@ -246,19 +227,11 @@ extension KeyboardManager {
     @objc internal func keyboardWillHide(notification: NSNotification){
         print(#function)
         guard let vc = self.viewController else {return}
-        if let containerViewBottomConstraint = self._retainedScrollViewBottomConstraint {
-            if #available(iOS 11.0, *) {
-                let safeAreaInsetsBottom: CGFloat = vc.view.safeAreaInsets.bottom
-                containerViewBottomConstraint.constant = -safeAreaInsetsBottom
-            } else {
-                let tabBarHeight: CGFloat = vc.tabBarController?.tabBar.frame.height ?? 0.0
-                containerViewBottomConstraint.constant = -tabBarHeight
-            }
-            
-            UIView.animate(withDuration: 0.3) {
-                self.view?.layoutIfNeeded()
-            }
-        } else {
+
+        if let scrollView = self._retainedScrollView {
+            scrollView.contentInset.bottom = 0
+        }
+        else {
             self.descentScreen()
         }
         isKeyboardDidShow = false
