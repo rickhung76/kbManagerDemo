@@ -93,6 +93,7 @@ extension KeyboardManager {
             let scrollView = view.allSubviews(is: UIScrollView.self).first(where: {$0.superview == self.view}) else {return}
         self._retainedScrollView = scrollView
         self._retainedScrollView!.keyboardDismissMode = .interactive
+//        self._retainedScrollView?.bounces = false
     }
     
     private func scoll2TextField() {
@@ -181,7 +182,8 @@ extension KeyboardManager {
         guard let viewHeight = self.view?.bounds.height else {return}
         let locationY = recognizer.location(in: self.view).y
         let diff:CGFloat = viewHeight - locationY
-        print("(\(keyboardHeight), \(diff))")
+        if diff > keyboardHeight {return}
+//        print("(\(keyboardHeight), \(diff))")
         self._retainedScrollView?.contentInset.bottom = diff
     }
     
@@ -235,9 +237,9 @@ extension KeyboardManager {
     }
     
     @objc internal func keyboardWillHide(notification: NSNotification){
+        guard let _ = self.viewController, isKeyboardDidShow else {return}
         print(#function)
-        guard let _ = self.viewController else {return}
-
+        
         if let scrollView = self._retainedScrollView {
             scrollView.contentInset.bottom = 0
         }
