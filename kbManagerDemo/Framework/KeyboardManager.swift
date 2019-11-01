@@ -95,6 +95,7 @@ extension KeyboardManager {
         guard let view = self.view,
             let scrollView = view.allSubviews(is: UIScrollView.self).first(where: {$0.superview == self.view}) else {return}
         self._retainedScrollView = scrollView
+        self._retainedScrollView!.keyboardDismissMode = .interactive
         self._retainedScrollViewBottomConstraint = scrollView.getBottomConstraints().filter({ (contraint) -> Bool in
             if #available(iOS 11.0, *) {
                 let isAnchored2SafeArea = (contraint.firstItem as? UILayoutGuide == view.safeAreaLayoutGuide)
@@ -191,20 +192,21 @@ extension KeyboardManager {
     }
     
     func hideKeyboardWhenPanDown() {
-        guard let view = self.retainedPanGestureTarget else {return}
+        guard let view = self._retainedScrollView else {return}
         _retainedGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.handlePan(recognizer:)))
+        _retainedGestureRecognizer!.delegate = self
         _retainedGestureRecognizer!.cancelsTouchesInView = false
         view.addGestureRecognizer(_retainedGestureRecognizer!)
     }
     
     @objc func handlePan(recognizer:UIPanGestureRecognizer) {
-        let translation = recognizer.translation(in: self.view)
-        print(translation)
-//      if let view = recognizer.view {
-//        view.center = CGPoint(x:view.center.x + translation.x,
-//                                y:view.center.y + translation.y)
-//      }
-//      recognizer.setTranslation(CGPoint.zero, in: self.view)
+        guard let viewHeight = self.view?.bounds.height else {return}
+        let locationY = recognizer.location(in: self.view).y
+        print("(\(viewHeight - keyboardHeight), \(locationY))")
+        let diff:CGFloat = locationY - (viewHeight - keyboardHeight)
+        if diff > 0 {
+            print(diff)
+        }
     }
     
     private func hideKeyboardWhenTappedAround() {
@@ -336,5 +338,12 @@ fileprivate extension UIView {
         } while nextResponder != nil
         
         return nil
+    }
+}
+
+//MARK: - UIGestureRecognizerDelegate
+extension KeyboardManager: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }
