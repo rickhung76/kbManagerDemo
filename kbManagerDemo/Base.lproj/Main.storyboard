@@ -109,19 +109,32 @@
                                     <constraint firstAttribute="trailing" secondItem="gSh-L0-3f2" secondAttribute="trailing" id="cNV-fE-u1q"/>
                                 </constraints>
                             </scrollView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eqa-Ai-9cL">
+                                <rect key="frame" x="0.0" y="753" width="414" height="60"/>
+                                <color key="backgroundColor" systemColor="systemYellowColor" red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="Ovz-kN-gnA"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.91372549020000005" green="0.2666666667" blue="0.41568627450000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="gSh-L0-3f2" firstAttribute="width" secondItem="6Tk-OE-BBY" secondAttribute="width" id="1gd-lV-Xdy"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="0QQ-zF-7pQ" secondAttribute="trailing" id="Ngt-ZQ-CfU"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="0QQ-zF-7pQ" secondAttribute="bottom" id="Rov-Aq-tgj"/>
+                            <constraint firstItem="Eqa-Ai-9cL" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="WHb-A8-kcQ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Eqa-Ai-9cL" secondAttribute="trailing" id="XeW-eB-Q6F"/>
                             <constraint firstItem="0QQ-zF-7pQ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="YwG-Wk-uRr"/>
+                            <constraint firstItem="0QQ-zF-7pQ" firstAttribute="bottom" secondItem="Eqa-Ai-9cL" secondAttribute="bottom" id="fKB-VL-Jwx"/>
                             <constraint firstItem="0QQ-zF-7pQ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="fat-v1-69z"/>
                             <constraint firstItem="gSh-L0-3f2" firstAttribute="height" secondItem="6Tk-OE-BBY" secondAttribute="height" id="pdW-Y0-NHD"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="Drg-YP-bW1"/>
+                    <connections>
+                        <outlet property="bottomView" destination="Eqa-Ai-9cL" id="dnm-Aw-aO4"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -199,6 +212,7 @@
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="5OL-2B-ToG" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Q8F-gs-Nue">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>

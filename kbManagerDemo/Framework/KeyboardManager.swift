@@ -53,21 +53,13 @@ class KeyboardManager: NSObject {
             }
         }
     }
-    
-    //for the bottom constraint of the first subview in scroll view if it's exist
-    //to enable the scrolling of scroll view after keyboard raised
+
     private weak var _retainedScrollView: UIScrollView?
     private weak var _retainedScrollViewBottomConstraint: NSLayoutConstraint?
     private var _retainedTapGestureRecognizer: UIGestureRecognizer?
-    
-//    override init() {
-//        super.init()
-//        self.initNotifications()
-//    }
-//
-//    deinit {
-//        NotificationCenter.default.removeObserver(self)
-//    }
+
+    private var _retainedGestureRecognizer: UIGestureRecognizer?
+    weak var retainedPanGestureTarget: UIView?
 }
 
 extension KeyboardManager {
@@ -93,8 +85,10 @@ extension KeyboardManager {
         
     private func textFieldSelected(_ textField: UITextField) {
 //        textField.delegate = self
-        self.hideKeyboardWhenTappedAround()
+        //TODO: OPEN
+//        self.hideKeyboardWhenTappedAround()
         self.getScrollView()
+        self.hideKeyboardWhenPanDown()
     }
 
     private func getScrollView() {
@@ -196,20 +190,37 @@ extension KeyboardManager {
         }
     }
     
+    func hideKeyboardWhenPanDown() {
+        guard let view = self.retainedPanGestureTarget else {return}
+        _retainedGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.handlePan(recognizer:)))
+        _retainedGestureRecognizer!.cancelsTouchesInView = false
+        view.addGestureRecognizer(_retainedGestureRecognizer!)
+    }
+    
+    @objc func handlePan(recognizer:UIPanGestureRecognizer) {
+        let translation = recognizer.translation(in: self.view)
+        print(translation)
+//      if let view = recognizer.view {
+//        view.center = CGPoint(x:view.center.x + translation.x,
+//                                y:view.center.y + translation.y)
+//      }
+//      recognizer.setTranslation(CGPoint.zero, in: self.view)
+    }
+    
     private func hideKeyboardWhenTappedAround() {
         guard let view = self.view else {return}
-        _retainedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.closeKeyboard))
-        _retainedTapGestureRecognizer!.cancelsTouchesInView = false
-        view.addGestureRecognizer(_retainedTapGestureRecognizer!)
+        _retainedGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.closeKeyboard))
+        _retainedGestureRecognizer!.cancelsTouchesInView = false
+        view.addGestureRecognizer(_retainedGestureRecognizer!)
     }
     
     private func removeTappedAround(_ textField: UITextField?) {
         guard let tf = textField,
             let vc = tf.viewContainingController(),
             let view = vc.view,
-            let tapGesture = self._retainedTapGestureRecognizer else {return}
+            let tapGesture = self._retainedGestureRecognizer else {return}
         view.removeGestureRecognizer(tapGesture)
-        self._retainedTapGestureRecognizer = nil
+        self._retainedGestureRecognizer = nil
     }
     
     @objc private func closeKeyboard() {
