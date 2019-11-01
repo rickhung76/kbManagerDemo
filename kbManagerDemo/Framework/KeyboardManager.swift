@@ -53,20 +53,9 @@ class KeyboardManager: NSObject {
             }
         }
     }
-    
-    //for the bottom constraint of the first subview in scroll view if it's exist
-    //to enable the scrolling of scroll view after keyboard raised
+
     private weak var _retainedScrollView: UIScrollView?
-    private var _retainedTapGestureRecognizer: UIGestureRecognizer?
-    
-//    override init() {
-//        super.init()
-//        self.initNotifications()
-//    }
-//
-//    deinit {
-//        NotificationCenter.default.removeObserver(self)
-//    }
+    private var _retainedGestureRecognizer: UIGestureRecognizer?
 }
 
 extension KeyboardManager {
@@ -90,15 +79,20 @@ extension KeyboardManager {
     }
         
     private func textFieldSelected(_ textField: UITextField) {
-//        textField.delegate = self
-        self.hideKeyboardWhenTappedAround()
         self.getScrollView()
+        if let _ = self._retainedScrollView {
+            self.hideKeyboardWhenPanDown()
+        }
+        else {
+            self.hideKeyboardWhenTappedAround()
+        }
     }
 
     private func getScrollView() {
         guard let view = self.view,
             let scrollView = view.allSubviews(is: UIScrollView.self).first(where: {$0.superview == self.view}) else {return}
         self._retainedScrollView = scrollView
+        self._retainedScrollView!.keyboardDismissMode = .interactive
     }
     
     private func scoll2TextField() {
@@ -175,20 +169,36 @@ extension KeyboardManager {
         }
     }
     
+    func hideKeyboardWhenPanDown() {
+        guard let view = self._retainedScrollView else {return}
+        _retainedGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(self.handlePan(recognizer:)))
+        _retainedGestureRecognizer!.delegate = self
+        _retainedGestureRecognizer!.cancelsTouchesInView = false
+        view.addGestureRecognizer(_retainedGestureRecognizer!)
+    }
+    
+    @objc func handlePan(recognizer:UIPanGestureRecognizer) {
+        guard let viewHeight = self.view?.bounds.height else {return}
+        let locationY = recognizer.location(in: self.view).y
+        let diff:CGFloat = viewHeight - locationY
+        print("(\(keyboardHeight), \(diff))")
+        self._retainedScrollView?.contentInset.bottom = diff
+    }
+    
     private func hideKeyboardWhenTappedAround() {
         guard let view = self.view else {return}
-        _retainedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.closeKeyboard))
-        _retainedTapGestureRecognizer!.cancelsTouchesInView = false
-        view.addGestureRecognizer(_retainedTapGestureRecognizer!)
+        _retainedGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.closeKeyboard))
+        _retainedGestureRecognizer!.cancelsTouchesInView = false
+        view.addGestureRecognizer(_retainedGestureRecognizer!)
     }
     
     private func removeTappedAround(_ textField: UITextField?) {
         guard let tf = textField,
             let vc = tf.viewContainingController(),
             let view = vc.view,
-            let tapGesture = self._retainedTapGestureRecognizer else {return}
+            let tapGesture = self._retainedGestureRecognizer else {return}
         view.removeGestureRecognizer(tapGesture)
-        self._retainedTapGestureRecognizer = nil
+        self._retainedGestureRecognizer = nil
     }
     
     @objc private func closeKeyboard() {
@@ -200,8 +210,8 @@ extension KeyboardManager {
 extension KeyboardManager {
     // keyboard
     @objc internal func keyboardWillShow(notification: NSNotification) {
-        print(#function)
         guard let vc = self.viewController else {return}
+        print(#function)
         self.isKeyboardDidShow = true
         let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let keyboardSize:CGSize = keyboardFrame.size
@@ -226,7 +236,7 @@ extension KeyboardManager {
     
     @objc internal func keyboardWillHide(notification: NSNotification){
         print(#function)
-        guard let vc = self.viewController else {return}
+        guard let _ = self.viewController else {return}
 
         if let scrollView = self._retainedScrollView {
             scrollView.contentInset.bottom = 0
@@ -298,5 +308,12 @@ fileprivate extension UIView {
         } while nextResponder != nil
         
         return nil
+    }
+}
+
+//MARK: - UIGestureRecognizerDelegate
+extension KeyboardManager: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }

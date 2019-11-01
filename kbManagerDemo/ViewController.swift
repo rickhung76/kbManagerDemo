@@ -10,6 +10,7 @@ import UIKit
 
 class ViewController: FCBaseViewController {
     
+    @IBOutlet weak var bottomView: UIView!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
